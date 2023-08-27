@@ -36,19 +36,17 @@ fn build_scores_table(results: String) -> HashMap<String, Team> {
         let team_2_score: u8 = v[3].parse().unwrap();
 
 
-        if !scores.contains_key(&team_1_name){
-            scores.insert(team_1_name, Team{goals_scored: team_1_score, goals_conceded: 0});
-        } else {
-            let conceded = scores[&team_1_name].goals_conceded;
-            scores.insert(team_1_name, Team{goals_scored: team_1_score, goals_conceded: conceded});
-        }
+        let entry_team_1 = scores.entry(team_1_name).or_insert(Team{goals_scored: 0, goals_conceded: 0});
 
-        if !scores.contains_key(&team_2_name){
-            scores.insert(team_2_name, Team{goals_scored: 0, goals_conceded: team_2_score});
-        } else {
-            let scored = scores[&team_2_name].goals_scored;
-            scores.insert(team_2_name, Team{goals_scored: scored, goals_conceded: team_2_score});
-        }
+        entry_team_1.goals_scored += team_1_score;
+        entry_team_1.goals_conceded += team_2_score;
+
+        let entry_team_2 = scores.entry(team_2_name).or_insert(Team{goals_scored: 0, goals_conceded: 0});
+
+        entry_team_2.goals_scored += team_2_score;
+        entry_team_2.goals_conceded += team_1_score;
+
+
 
         // TODO: Populate the scores table with details extracted from the
         // current line. Keep in mind that goals scored by team_1
